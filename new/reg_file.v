@@ -18,9 +18,9 @@ module reg_file(
 
     always @(posedge clk or negedge reset) begin
         if (!reset) begin
-            
             for (i = 0; i < 32; i = i + 1) begin
                 register[i] <= 0;
+            end 
         end else begin
             if (W_en && W_reg != 5'b00000) begin
                 register[W_reg] <= W_data;

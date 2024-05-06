@@ -30,5 +30,5 @@ module decoder(
         .W_en(write_R),
         .R_data_1(R_data_1),
         .R_data_2(R_data_2)
-    )
+    );
 endmodule
