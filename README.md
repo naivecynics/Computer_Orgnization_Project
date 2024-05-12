@@ -14,4 +14,4 @@
     cd project/project.srcs
     git init
     git remote add origin https://github.com/naivecynics/Computer_Orgnization_Project.git
-```
+``` 
