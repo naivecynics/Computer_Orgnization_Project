@@ -1,15 +1,5 @@
 `include "parameters.v"
 
-ALU alu_inst(
-    .ReadData1(rs1),
-    .ReadData2(rs2),
-    .imm32(imme),
-    .ALUOp(ALUOp),
-    .funct3(funct3),
-    .funct7(funct7),
-    
-)
-
 module ALU(
     input [31:0] ReadData1,
     input [31:0] ReadData2,
