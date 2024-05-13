@@ -1,4 +1,4 @@
-module Controller (
+module controller (
     input [31:0] inst,
     output reg Branch,
     output reg MemRead,

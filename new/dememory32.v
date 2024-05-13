@@ -23,7 +23,7 @@ module dememory32(
     // 0 : program mode
     wire kickoff = upg_rst_i | (~upg_wen_i & upg_done_i);
 
-    proram memory (
+    prgram data_memory (
         .clka  (~kickoff ? upg_clk_i : ram_clk),
         .addra (~kickoff ? upg_adr_i : ram_adr_i),
         .dina  (~kickoff ? upg_dat_i : ram_dat_i),

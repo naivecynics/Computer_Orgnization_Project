@@ -5,7 +5,7 @@ module instr_decoder(
     output [6:0] func7, // funct7
     output [4:0] rs1, // source register 1
     output [4:0] rs2, // source register 2
-    output [4:0] rd // destination register
+    output [4:0] rd, // destination register
     output [31:0] imme // immediate value
 );
 
