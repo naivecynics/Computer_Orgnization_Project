@@ -16,6 +16,8 @@ module reg_file(
     assign R_data_1 = register[R_reg_1];
     assign R_data_2 = register[R_reg_2];
 
+    integer i;
+
     always @(posedge clk or negedge reset) begin
         if (!reset) begin
             for (i = 0; i < 32; i = i + 1) begin

@@ -23,12 +23,20 @@ module dememory32(
     // 0 : program mode
     wire kickoff = upg_rst_i | (~upg_wen_i & upg_done_i);
 
+    // prgram data_memory (
+    //     .clka  (~kickoff ? upg_clk_i : ram_clk),
+    //     .addra (~kickoff ? upg_adr_i : ram_adr_i),
+    //     .dina  (~kickoff ? upg_dat_i : ram_dat_i),
+    //     .douta (~kickoff ? upg_dat_i : ram_dat_o),
+    //     .wea   (~kickoff ? upg_wen_i : ram_wen_i)
+    // );
+
     prgram data_memory (
-        .clka  (~kickoff ? upg_clk_i : ram_clk),
-        .addra (~kickoff ? upg_adr_i : ram_adr_i),
-        .dina  (~kickoff ? upg_dat_i : ram_dat_i),
-        .douta (~kickoff ? upg_dat_i : ram_dat_o),
-        .wea   (~kickoff ? upg_wen_i : ram_wen_i)
+        .clka  (ram_clk),
+        .addra (ram_adr_i),
+        .dina  (ram_dat_i),
+        .douta (ram_dat_o),
+        .wea   (ram_wen_i)
     );
 
 endmodule

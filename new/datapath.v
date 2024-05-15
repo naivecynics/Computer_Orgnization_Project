@@ -4,15 +4,17 @@ module datapath(
 );
 
     wire [31:0] instr;
-
-    //instantiating the instruction decoder
-
+    wire [6:0] opcode;
     wire [2:0] funct3;
     wire [6:0] funct7;
     wire [4:0] rs1;
     wire [4:0] rs2;
     wire [4:0] rd;
     wire [31:0] imme;
+
+    //instantiating the instruction decoder
+
+
     wire [31:0] R_data_1;
     wire [31:0] R_data_2;
 
@@ -68,6 +70,9 @@ module datapath(
     );
 
     // instantiating the register file
+
+    reg [31:0] W_data;
+
     reg_file regfile_inst(
         .clk(clk),
         .reset(rst_n),
@@ -83,6 +88,7 @@ module datapath(
     // instantiating the ALU
 
     wire zero;
+    wire [31:0] ALUResult;
 
     ALU alu_inst(
         .ReadData1(R_data_1),
