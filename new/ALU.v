@@ -1,4 +1,4 @@
-`include parameters.v
+`include "parameters.v"
 
 module ALU(
     input [31:0] ReadData1,
