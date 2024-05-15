@@ -21,7 +21,7 @@
 */
 
 begin:
-    lw a7,address
+    lw a7,
     li t0,0
     li t1,1
     li t2,2
@@ -59,7 +59,7 @@ test001:
     #read a
     li a7, 5
     ecall
-    #move a ti register a1
+    
     mv a3, a0
     j begin 
 
@@ -100,10 +100,10 @@ notlight:
     j stall
 
 #a6 store previous count
+
 stall:
     #read count
 
-    #
     bne a6, a5, begin
     mv a6, a5
     j stall
