@@ -1,27 +1,27 @@
-`include "CONSTANT.v"
+`include "parameters.v"
 module controller_main(
     input [6:0] opcode, // instruction[6:0]
     input [2:0] func3,  // instruction[14:12]
 
-    output reg MemRead; // main control signals
-	output reg MemtoReg;
-	output reg [1:0] ALUop;
-	output reg MemWrite;
-	output reg ALUSrc;
-	output reg RegWrite;
+    output reg MemRead, // main control signals
+	output reg MemtoReg,
+	output reg [1:0] ALUop,
+	output reg MemWrite,
+	output reg ALUSrc,
+	output reg RegWrite,
 
-	output reg lui;     //specific branch signals
-	output reg U;
-	output reg jal;
-	output reg jalr;
-	output reg beq;
-	output reg bne;
-	output reg blt;
-	output reg bge;
-	output reg bltu;
-	output reg bgeu;
+	output reg lui,     //specific branch signals
+	output reg U,
+	output reg jal,
+	output reg jalr,
+	output reg beq,
+	output reg bne,
+	output reg blt,
+	output reg bge,
+	output reg bltu,
+	output reg bgeu,
 
-	output reg [2:0]RW_type;
+	output reg [2:0]RW_type
 	
 );
     wire branch;

@@ -1,9 +1,9 @@
-`include "CONSTANT.v"
+`include "parameters.v"
 module controller_ALU(
     input [1:0] ALUop, // 
     input [2:0] func3,  // instruction[14:12]
     input [6:0] func7,  // instruction[31:25]
-    output reg [3:0] ALUctl,  // main control signals
+    output reg [3:0] ALUctl  // main control signals
 );
     wire [3:0] branchop;
     wire [3:0] RIop;

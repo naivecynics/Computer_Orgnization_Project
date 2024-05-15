@@ -22,7 +22,7 @@ module controller_total(
     output reg bltu,
     output reg bgeu,
 
-    output reg [3:0] ALUControl // ALU control signals
+    output reg [3:0] ALUControl, // ALU control signals
     output reg [2:0] RegWriteControl // RegWrite control signals
     
 );

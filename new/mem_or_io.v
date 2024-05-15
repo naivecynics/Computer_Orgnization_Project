@@ -16,11 +16,11 @@ module mem_or_io(
     // maybe later add more input (buttons, keyboard, etc)
 
     // data write
-    output [31:0] w_reg_dat     // write back to register file
+    output [31:0] w_reg_dat,   // write back to register file
     output reg [31:0] w_mem_or_oi_dat,
     output led_ctrl,
     output sw_ctrl
-)
+);
 
     assign adr_out = adr_in;
 

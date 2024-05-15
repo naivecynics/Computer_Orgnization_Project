@@ -39,7 +39,7 @@ module datapath(
     wire MemWrite;
     wire [1:0] ALUOp;
 
-    controller controller_inst(
+    Controller controller_inst(
         .inst(instr),
         .Branch(Branch),
         .MemRead(MemRead),
