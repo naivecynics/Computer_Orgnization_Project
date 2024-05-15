@@ -5,6 +5,7 @@
 `define     ZERO_7          7'd0
 `define     ZERO_3          3'd0
 
+    /*        INSTRUCTION        */
 
 `define		lui				7'b0110111
 `define		auipc			7'b0010111
