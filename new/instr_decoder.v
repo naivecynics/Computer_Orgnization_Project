@@ -10,8 +10,8 @@ module instr_decoder(
 );
 
     assign opcode = instr[6:0];
-    assign func3 = instr[14:12];
-    assign func7 = instr[31:25];
+    assign funct3 = instr[14:12];
+    assign funct7 = instr[31:25];
     assign rs1 = instr[19:15];
     assign rs2 = instr[24:20];
     assign rd = instr[11:7];

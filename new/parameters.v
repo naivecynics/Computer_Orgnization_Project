@@ -17,6 +17,9 @@
 `define		I_type			7'b0010011
 `define		R_type			7'b0110011
 
+    /*        FUNCT3        */
+
+
 `define 	ADD  			4'b0001
 `define 	SUB  			4'b0011
 `define 	SLL  			4'b1100

@@ -14,10 +14,6 @@ module datapath(
 
     //instantiating the instruction decoder
 
-
-    wire [31:0] R_data_1;
-    wire [31:0] R_data_2;
-
     instr_decoder instr_decoder_inst(
         .instr(instr),
         .opcode(opcode),
@@ -31,47 +27,67 @@ module datapath(
 
     // controller module
 
-    wire Branch;
     wire MemRead;
     wire MemtoReg;
     wire RegWrite;
     wire ALUSrc;
     wire MemWrite;
-    wire [1:0] ALUOp;
+    wire [3:0] ALU_control;
+    wire beq;
+    wire bne;
+    wire blt;
+    wire bge;
+    wire bltu;
+    wire bgeu;
+    wire lui;
+    wire auipc;
+    wire U_type;
+    wire jal;
+    wire jalr;
 
-    Controller controller_inst(
-        .inst(instr),
-        .Branch(Branch),
+    Main_controller Main_controller_inst (
+        .opcode(opcode),
+        .funct3(funct3),
+        .funct7(funct7),
         .MemRead(MemRead),
         .MemtoReg(MemtoReg),
         .RegWrite(RegWrite),
         .ALUSrc(ALUSrc),
         .MemWrite(MemWrite),
-        .ALUOp(ALUOp)
+        .ALU_control(ALU_control),
+        .beq(beq),
+        .bne(bne),
+        .blt(blt),
+        .bge(bge),
+        .bltu(bltu),
+        .bgeu(bgeu),
+        .lui(lui),
+        .auipc(auipc),
+        .U_type(U_type),
+        .jal(jal),
+        .jalr(jalr)
     );
 
     // instantiating the program counter
     
-    wire [31:0] pc;
+   
+    wire jump_flag;
+    wire [31:0] ALUResult;
     
     pc pc_inst(
         .clk(clk),
         .rst_n(rst_n),
-        .pc_in(pc),
-        .pc_out(pc)
+        .ALU_result(ALUResult),
+        .jump_flag(jump_flag),
+        .inst(instr)
     );
 
-    // instatiatiing the instruction memory
-
-    prgrom instruction_memory_inst(
-        .addra(pc[13:0]),
-        .clka(clk),
-        .douta(instr)
-    );
 
     // instantiating the register file
 
     reg [31:0] W_data;
+    wire [31:0] R_data_1;
+    wire [31:0] R_data_2;
 
     reg_file regfile_inst(
         .clk(clk),
@@ -87,30 +103,33 @@ module datapath(
 
     // instantiating the ALU
 
-    wire zero;
-    wire [31:0] ALUResult;
-
     ALU alu_inst(
-        .ReadData1(R_data_1),
-        .ReadData2(R_data_2),
-        .imm32(imme),
-        .ALUOp(ALUOp),
-        .funct3(funct3),
-        .funct7(funct7),
+        .Read_data1(R_data_1),
+        .Read_data2(R_data_2),
+        .imme(imme),
         .ALUSrc(ALUSrc),
-        .ALUResult(ALUResult),
-        .zero(zero)
+        .beq(beq),
+        .bne(bne),
+        .blt(blt),
+        .bge(bge),
+        .bltu(bltu),
+        .bgeu(bgeu),
+        .jal(jal),
+        .jalr(jalr),
+        .ALU_control(ALU_control),
+        .ALU_result(ALUResult),
+        .jump_flag(jump_flag)
     );
 
     // data memory module
 
     wire [31:0] ram_data_out;
-    dememory32 dememory_inst(
-        .ram_clk_i(clk),
-        .ram_wen_i(MemWrite),
-        .ram_adr_i(ALUResult[13:0]),
-        .ram_dat_i(R_data_2),
-        .ram_dat_o(ram_data_out)
+    data_memory data_memory_inst(
+        .clk(clk),
+        .MemWrite(MemWrite),
+        .ALUResult(ALUResult),
+        .R_data2(R_data_2),
+        .ram_data_out(ram_data_out)
     );
 
 
