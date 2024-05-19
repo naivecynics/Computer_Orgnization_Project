@@ -180,10 +180,10 @@ always @* begin
         ALU_control = 4'b0000; // add
     end
     else if (opcode == `lui) begin
-        ALU_control = 4'b0000; // add
+        ALU_control = 4'b0111; // lui
     end
     else if (opcode == `auipc) begin
-        ALU_control = 4'b0000; //add
+        ALU_control = 4'b1010; // auipc
     end
     else begin
         ALU_control = 4'b0000;
