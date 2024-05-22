@@ -2,6 +2,7 @@ module pc(
     input clk,
     input rst_n,
     input [31:0] ALU_result,    // jump address
+    input stop_flag,            // ecall
     // input stop_flag,            // ecall
     input jump_flag,
     output [31:0] inst,

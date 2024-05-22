@@ -20,4 +20,5 @@ module instr_decoder(
         .in(instr),
         .imm(imme)
     );
-    endmodule
+
+endmodule

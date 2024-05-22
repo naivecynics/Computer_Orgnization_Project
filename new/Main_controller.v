@@ -4,6 +4,7 @@ module Main_controller (
     input [6:0] opcode,
     input [2:0] funct3,
     input [6:0] funct7,
+    
     output reg MemRead,
     output reg MemtoReg,
     output reg RegWrite,
@@ -22,12 +23,18 @@ module Main_controller (
     output auipc,
     output U_type,
     output jal,
-    output jalr
+    output jalr,
+
+    output ecall
 );
 
 /*
 	output   [2:0]RW_type;??????????????????
 */
+
+    // ecall
+
+    assign ecall = (opcode == `ECALL);
 
     //B-type
     wire B_type = (opcode == `B_type);
@@ -89,110 +96,107 @@ module Main_controller (
         end
     end
     
-// ##########################################################
-// ALU control
-/*
-ALU_control specification:
+    // ##########################################################
+    // ALU control
+    /*
+    ALU_control specification:
 
-0000: add
-0001: sub
+    0000: add
+    0001: sub
 
-0100: and
-0101: or
-0110: xor
+    0100: and
+    0101: or
+    0110: xor
 
-1000: signed less than
-1001: unsigned less than
+    1000: signed less than
+    1001: unsigned less than
 
-1100: shift left logical
-1101: shift right logical
-1110: shift right arithmetic
-
-0010：subu
-0111：lui
-1010：auipc
-
-0011：beq,bne,blt,bge,bltu,bgeu
-
-剩余的ALU控制信号：
-0011，1011，1111
+    1100: shift left logical
+    1101: shift right logical
+    1110: shift right arithmetic
 
 
-还有一些难以处理的：bge，bgeu，lui, auipc
-*/
-always @* begin
-    if (R_type) begin
-        case(funct3)
-            3'b000 : ALU_control = (funct7 == 7'b0000000) ? 4'b0000 : 4'b0001; //add or sub
-            3'b100 : ALU_control = 4'b0110; //xor
-            3'b110 : ALU_control = 4'b0101; //or
-            3'b111 : ALU_control = 4'b0100; //and
-            3'b001 : ALU_control = 4'b1100; //sll
-            3'b101 : ALU_control = (funct7 == 7'b0000000) ? 4'b1101 : 4'b1110; //srl or sra
-            3'b010 : ALU_control = 4'b1000; //slt
-            3'b011 : ALU_control = 4'b1001; //sltu
-            default : ALU_control = 4'b0000; 
-        endcase
+    剩余的ALU控制信号：
+    0010，0011，0111，1010，1011，1111
+    0010：subu
+    0111：lui
+    1010：auipc
+    还有一些难以处理的：bge，bgeu，lui, auipc
+    */
+        
+    always @* begin
+        if (R_type) begin
+            case(funct3)
+                3'b000 : ALU_control = (funct7 == 7'b0000000) ? 4'b0000 : 4'b0001; //add or sub
+                3'b100 : ALU_control = 4'b0110; //xor
+                3'b110 : ALU_control = 4'b0101; //or
+                3'b111 : ALU_control = 4'b0100; //and
+                3'b001 : ALU_control = 4'b1100; //sll
+                3'b101 : ALU_control = (funct7 == 7'b0000000) ? 4'b1101 : 4'b1110; //srl or sra
+                3'b010 : ALU_control = 4'b1000; //slt
+                3'b011 : ALU_control = 4'b1001; //sltu
+                default : ALU_control = 4'b0000; 
+            endcase
+        end
+        else if (I_type) begin // I-type: addi, xori, ori, andi, slli, srli, srai, slti, sltiu
+            case(funct3)
+                3'b000 : ALU_control = 4'b0000; //addi
+                3'b100 : ALU_control = 4'b0110; //xori
+                3'b110 : ALU_control = 4'b0101; //ori
+                3'b111 : ALU_control = 4'b0100; //andi
+                3'b001 : ALU_control = 4'b1100; //slli
+                3'b101 : ALU_control = (funct7 == 7'b0000000) ? 4'b1101 : 4'b1110; //srli or srai
+                3'b010 : ALU_control = 4'b1000; //slti
+                3'b011 : ALU_control = 4'b1001; //sltiu
+                default : ALU_control = 4'b0000; 
+            endcase
+        end
+        else if (opcode == `load) begin
+            case(funct3)
+                3'b000 : ALU_control = 4'b0000; //lb
+                3'b001 : ALU_control = 4'b0000; //lh
+                3'b010 : ALU_control = 4'b0000; //lw
+                3'b100 : ALU_control = 4'b0000; //lbu
+                3'b101 : ALU_control = 4'b0000; //lhu
+                default : ALU_control = 4'b0000;
+            endcase
+        end
+        else if (opcode == `store) begin
+            case(funct3)
+                3'b000 : ALU_control = 4'b0000; //sb
+                3'b001 : ALU_control = 4'b0000; //sh
+                3'b010 : ALU_control = 4'b0000; //sw
+                default : ALU_control = 4'b0000;
+            endcase
+        end
+        // to do
+        else if (B_type) begin
+            case(funct3)
+                3'b000 : ALU_control = 4'b0001; //beq
+                3'b001 : ALU_control = 4'b0001; //bne
+                3'b100 : ALU_control = 4'b0001; //blt
+                3'b101 : ALU_control = 4'b0001; //bge
+                3'b110 : ALU_control = 4'b0010; //bltu
+                3'b111 : ALU_control = 4'b0010; //bgeu
+                default : ALU_control = 4'b0000;
+            endcase
+        end
+        else if (opcode == `jal) begin
+            ALU_control = 4'b0000; // add   
+        end
+        else if (opcode == `jalr) begin
+            ALU_control = 4'b0000; // add
+        end
+        else if (opcode == `lui) begin
+            ALU_control = 4'b0111; // lui
+        end
+        else if (opcode == `auipc) begin
+            ALU_control = 4'b1010; // auipc
+        end
+        else begin
+            ALU_control = 4'b0000;
+        end
     end
-    else if (I_type) begin // I-type: addi, xori, ori, andi, slli, srli, srai, slti, sltiu
-        case(funct3)
-            3'b000 : ALU_control = 4'b0000; //addi
-            3'b100 : ALU_control = 4'b0110; //xori
-            3'b110 : ALU_control = 4'b0101; //ori
-            3'b111 : ALU_control = 4'b0100; //andi
-            3'b001 : ALU_control = 4'b1100; //slli
-            3'b101 : ALU_control = (funct7 == 7'b0000000) ? 4'b1101 : 4'b1110; //srli or srai
-            3'b010 : ALU_control = 4'b1000; //slti
-            3'b011 : ALU_control = 4'b1001; //sltiu
-            default : ALU_control = 4'b0000; 
-        endcase
-    end
-    else if (opcode == `load) begin
-        case(funct3)
-            3'b000 : ALU_control = 4'b0000; //lb
-            3'b001 : ALU_control = 4'b0000; //lh
-            3'b010 : ALU_control = 4'b0000; //lw
-            3'b100 : ALU_control = 4'b0000; //lbu
-            3'b101 : ALU_control = 4'b0000; //lhu
-            default : ALU_control = 4'b0000;
-        endcase
-    end
-    else if (opcode == `store) begin
-        case(funct3)
-            3'b000 : ALU_control = 4'b0000; //sb
-            3'b001 : ALU_control = 4'b0000; //sh
-            3'b010 : ALU_control = 4'b0000; //sw
-            default : ALU_control = 4'b0000;
-        endcase
-    end
-    // to do
-    else if (B_type) begin
-        case(funct3)
-            3'b000 : ALU_control = 4'b0011; //beq
-            3'b001 : ALU_control = 4'b0011; //bne
-            3'b100 : ALU_control = 4'b0011; //blt
-            3'b101 : ALU_control = 4'b0011; //bge
-            3'b110 : ALU_control = 4'b0011; //bltu
-            3'b111 : ALU_control = 4'b0011; //bgeu
-            default : ALU_control = 4'b0000;
-        endcase
-    end
-    else if (opcode == `jal) begin
-        ALU_control = 4'b0011; // add   
-    end
-    else if (opcode == `jalr) begin
-        ALU_control = 4'b0011; // add
-    end
-    else if (opcode == `lui) begin
-        ALU_control = 4'b0111; // lui
-    end
-    else if (opcode == `auipc) begin
-        ALU_control = 4'b1010; // auipc
-    end
-    else begin
-        ALU_control = 4'b0000;
-    end
-end
 
 endmodule
 

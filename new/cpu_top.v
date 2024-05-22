@@ -3,7 +3,7 @@ module cpu_top(
     input rst_n
 );
 
-    wire clk_23;    // for cpu  - 23 MHz
+    wire clk_23;    // for cpu  - 23 MHz (5 MHz)
     wire clk_10;    // for UART - 10 MHz   
 
     cpuclk cpuclk_inst(

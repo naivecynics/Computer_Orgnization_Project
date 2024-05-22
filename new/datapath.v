@@ -44,6 +44,7 @@ module datapath(
     wire U_type;
     wire jal;
     wire jalr;
+    wire ecall;
 
     Main_controller Main_controller_inst (
         .opcode(opcode),
@@ -65,7 +66,8 @@ module datapath(
         .auipc(auipc),
         .U_type(U_type),
         .jal(jal),
-        .jalr(jalr)
+        .jalr(jalr),
+        .ecall(ecall)
     );
 
     // instantiating the program counter
@@ -79,6 +81,7 @@ module datapath(
         .rst_n(rst_n),
         .ALU_result(ALUResult),
         .jump_flag(jump_flag),
+        .stop_flag(ecall),   
         .inst(instr)
     );
 
@@ -92,13 +95,16 @@ module datapath(
     reg_file regfile_inst(
         .clk(clk),
         .reset(rst_n),
+        // .stop_flag(?)
         .R_reg_1(rs1),
         .R_reg_2(rs2),
         .W_reg(rd),
         .W_data(W_data),
         .W_en(RegWrite),
         .R_data_1(R_data_1),
-        .R_data_2(R_data_2)
+        .R_data_2(R_data_2),
+        .func3(funct3),
+        .func7(funct7)
     );
 
     // instantiating the ALU
