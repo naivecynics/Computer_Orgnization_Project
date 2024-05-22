@@ -108,12 +108,16 @@ ALU_control specification:
 1101: shift right logical
 1110: shift right arithmetic
 
-
-剩余的ALU控制信号：
-0010，0011，0111，1010，1011，1111
 0010：subu
 0111：lui
 1010：auipc
+
+0011：beq,bne,blt,bge,bltu,bgeu
+
+剩余的ALU控制信号：
+0011，1011，1111
+
+
 还有一些难以处理的：bge，bgeu，lui, auipc
 */
 always @* begin
@@ -164,20 +168,20 @@ always @* begin
     // to do
     else if (B_type) begin
         case(funct3)
-            3'b000 : ALU_control = 4'b0001; //beq
-            3'b001 : ALU_control = 4'b0001; //bne
-            3'b100 : ALU_control = 4'b0001; //blt
-            3'b101 : ALU_control = 4'b0001; //bge
-            3'b110 : ALU_control = 4'b0010; //bltu
-            3'b111 : ALU_control = 4'b0010; //bgeu
+            3'b000 : ALU_control = 4'b0011; //beq
+            3'b001 : ALU_control = 4'b0011; //bne
+            3'b100 : ALU_control = 4'b0011; //blt
+            3'b101 : ALU_control = 4'b0011; //bge
+            3'b110 : ALU_control = 4'b0011; //bltu
+            3'b111 : ALU_control = 4'b0011; //bgeu
             default : ALU_control = 4'b0000;
         endcase
     end
     else if (opcode == `jal) begin
-        ALU_control = 4'b0000; // add   
+        ALU_control = 4'b0011; // add   
     end
     else if (opcode == `jalr) begin
-        ALU_control = 4'b0000; // add
+        ALU_control = 4'b0011; // add
     end
     else if (opcode == `lui) begin
         ALU_control = 4'b0111; // lui

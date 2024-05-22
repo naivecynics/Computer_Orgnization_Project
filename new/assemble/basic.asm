@@ -17,7 +17,7 @@ begin:
     beq a7,t5,test101
     beq a7,t6,test110
     beq a7,s7,test111
-    j stall
+    beq x0,x0,stall
     
 
 test000:

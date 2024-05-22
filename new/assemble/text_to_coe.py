@@ -24,4 +24,4 @@ def binary_to_coe(input_file, output_file):
         outfile.write(coe_content)
 
 # 调用函数，将test.txt转换为output.coe
-binary_to_coe('C:\\Users\\CO_Project\\project.srcs\\new\\assemble\\U_type_test.txt', 'C:\\Users\\CO_Project\\project.srcs\\new\\assemble\\U_type_test.coe')
+binary_to_coe('C:\\Users\\CO_Project\\project.srcs\\new\\assemble\\beq_test.txt', 'C:\\Users\\CO_Project\\project.srcs\\new\\assemble\\beq_test.coe')

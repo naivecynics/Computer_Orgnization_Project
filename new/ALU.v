@@ -3,7 +3,9 @@
 module ALU(
     input [31:0] Read_data1,
     input [31:0] Read_data2,
+    input [2:0] funct3,
     input [31:0] imme,
+    input [31:0] pc_out, 
     input ALUSrc,
     input beq,
     input bne,
@@ -35,11 +37,17 @@ ALU_control specification:
 1101: shift right logical
 1110: shift right arithmetic
 
-剩余的ALU控制信号：
-0010，0011，0111，1010，1011，1111
 0010：subu
 0111：lui
 1010：auipc
+
+0011：beq,bne,blt,bge
+
+剩余的ALU控制信号�?
+0011�?1011�?1111
+
+
+还有�?些难以处理的：bge，bgeu，lui, auipc
 */
 reg [31:0] operand2;
 always @* begin
@@ -48,17 +56,47 @@ always @* begin
         1'b1 : operand2 = imme; 
     endcase
 end
+
+
+// ############################################################
+// branch part
+reg branch_result;
+reg [31:0] Address_result;
+always @* begin
+ 
+    if(ALU_control == 4'b0011)  begin
+            Address_result = $signed(imme) + $signed(pc_out); // beq,bne,blt,bge,bltu,bgeu
+            case(funct3)
+                3'b000: branch_result = (Read_data1 == Read_data2)? 1: 0; // beq
+                3'b001: branch_result = (Read_data1 != Read_data2)? 1: 0; // bne
+                3'b100: branch_result = ($signed(Read_data1) < $signed(Read_data2))? 1: 0; // blt
+                3'b101: branch_result = ($signed(Read_data1) >= $signed(Read_data2))? 1: 0; // bge
+                3'b110: branch_result = (Read_data1 < Read_data2)? 1: 0; // bltu
+                3'b111: branch_result = (Read_data1 >= Read_data2)? 1: 0; // bgeu
+            endcase
+    end
+    if (jal || jalr)  begin
+        branch_result = 1;
+        if (jal)  begin
+            Address_result = $signed(imme) + $signed(pc_out);
+        end
+        else if (jalr)  begin
+            Address_result = $signed(imme) + $signed(Read_data1);
+        end
+    end
+end
+// ############################################################
+
+
 // ############################################################
 // hard part
 reg [31:0] Hard_result;
 always @* begin
     case(ALU_control)
-        4'b0010 : Hard_result = Read_data1 - operand2; // subu
         4'b0111 : Hard_result = imme; // lui
         4'b1010 : Hard_result = $signed(imme) + $signed(Read_data1); // auipc
     endcase
 end
-
 // ############################################################
 
 // ############################################################
@@ -101,22 +139,22 @@ end
 
 // jump_flag
 always @* begin
-    if (beq && Arithmetic_result == 32'b0)  begin
+    if (beq && branch_result)  begin
         jump_flag = 1;
     end
-    else if (bne && Arithmetic_result != 32'b0)  begin
+    else if (bne && branch_result)  begin
         jump_flag = 1;
     end
-    else if (blt && Arithmetic_result < 32'b0)  begin
+    else if (blt && branch_result)  begin
         jump_flag = 1;
     end
-    else if (bge && Arithmetic_result >= 32'b0)  begin
+    else if (bge && branch_result)  begin
         jump_flag = 1;
     end
-    else if (bltu && Hard_result < 32'b0)  begin
+    else if (bltu && branch_result)  begin
         jump_flag = 1;
     end
-    else if (bgeu && Hard_result >= 32'b0)  begin
+    else if (bgeu && branch_result)  begin
         jump_flag = 1;
     end
     else if (jal || jalr)  begin
@@ -129,14 +167,15 @@ end
 //ALU_result
 always @* begin
     case(ALU_control)
-        4'b0010,4'b0111,4'b1010 : ALU_result = Hard_result;
+        4'b0111,4'b1010 : ALU_result = Hard_result;
         4'b0000,4'b0001,4'b1100,4'b1101,4'b1110 : ALU_result = Arithmetic_result;
         4'b0100,4'b0101,4'b0110 : ALU_result = Logic_result;
         4'b1000,4'b1001 : ALU_result = Comparison_result;
+        4'b0011 : ALU_result = Address_result;
         default : ALU_result = 32'h0;
     endcase
 end
-//ALU_zero表示两个数是否相等，1表示相等，0表示不等
+//ALU_zero表示两个数是否相等，1表示相等�?0表示不等
 // assign ALU_zero = (ALU_result == 32'b0)? 1: 0;
 
 endmodule
