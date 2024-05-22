@@ -11,6 +11,7 @@ module datapath(
     wire [4:0] rs2;
     wire [4:0] rd;
     wire [31:0] imme;
+    
 
     //instantiating the instruction decoder
 
@@ -75,6 +76,7 @@ module datapath(
    
     wire jump_flag;
     wire [31:0] ALUResult;
+    wire [31:0] pc_out;
     
     pc pc_inst(
         .clk(clk),
@@ -82,7 +84,8 @@ module datapath(
         .ALU_result(ALUResult),
         .jump_flag(jump_flag),
         .stop_flag(ecall),   
-        .inst(instr)
+        .inst(instr),
+        .pc_out(pc_out)
     );
 
 
@@ -106,13 +109,14 @@ module datapath(
         .func3(funct3),
         .func7(funct7)
     );
-
     // instantiating the ALU
 
     ALU alu_inst(
         .Read_data1(R_data_1),
         .Read_data2(R_data_2),
         .imme(imme),
+        .pc_out(pc_out),
+        .funct3(funct3),
         .ALUSrc(ALUSrc),
         .beq(beq),
         .bne(bne),

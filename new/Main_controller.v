@@ -172,12 +172,12 @@ module Main_controller (
         // to do
         else if (B_type) begin
             case(funct3)
-                3'b000 : ALU_control = 4'b0001; //beq
-                3'b001 : ALU_control = 4'b0001; //bne
-                3'b100 : ALU_control = 4'b0001; //blt
-                3'b101 : ALU_control = 4'b0001; //bge
-                3'b110 : ALU_control = 4'b0010; //bltu
-                3'b111 : ALU_control = 4'b0010; //bgeu
+                3'b000 : ALU_control = 4'b0011; //beq
+                3'b001 : ALU_control = 4'b0011; //bne
+                3'b100 : ALU_control = 4'b0011; //blt
+                3'b101 : ALU_control = 4'b0011; //bge
+                3'b110 : ALU_control = 4'b0011; //bltu
+                3'b111 : ALU_control = 4'b0011; //bgeu
                 default : ALU_control = 4'b0000;
             endcase
         end
