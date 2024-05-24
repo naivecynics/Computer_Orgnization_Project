@@ -25,7 +25,8 @@ module Main_controller (
     output jal,
     output jalr,
 
-    output ecall
+    output keyin,
+    input key_finish
 );
 
 /*
@@ -33,8 +34,10 @@ module Main_controller (
 */
 
     // ecall
+    wire ecall = (opcode == `ECALL);
+    assign keyin = (opcode == `ECALL);
+    // always @
 
-    assign ecall = (opcode == `ECALL);
 
     //B-type
     wire B_type = (opcode == `B_type);
@@ -73,7 +76,7 @@ module Main_controller (
     end
     //RegWrite
     always @* begin
-        if (opcode == `load || opcode == `jalr || opcode == `jal || R_type || I_type || U_type) begin
+        if (opcode == `load || opcode == `jalr || opcode == `jal || R_type || I_type || U_type || ecall) begin
             RegWrite = 1;
         end else begin
             RegWrite = 0;

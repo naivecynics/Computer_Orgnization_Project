@@ -1,6 +1,9 @@
 module datapath(
     input clk,
-    input rst_n
+    input rst_n,
+    input [31:0] keyboard_in,
+    input keyboard_finish,
+    output [31:0] reg_map_tube
 );
 
     wire [31:0] instr;
@@ -68,12 +71,13 @@ module datapath(
         .U_type(U_type),
         .jal(jal),
         .jalr(jalr),
-        .ecall(ecall)
+        .keyin(ecall),
+        .key_finish(keyboard_finish)
     );
 
     // instantiating the program counter
     
-   
+    
     wire jump_flag;
     wire [31:0] ALUResult;
     wire [31:0] pc_out;
@@ -98,7 +102,7 @@ module datapath(
     reg_file regfile_inst(
         .clk(clk),
         .reset(rst_n),
-        // .stop_flag(?)
+        .stop_flag(ecall),
         .R_reg_1(rs1),
         .R_reg_2(rs2),
         .W_reg(rd),
@@ -106,6 +110,7 @@ module datapath(
         .W_en(RegWrite),
         .R_data_1(R_data_1),
         .R_data_2(R_data_2),
+        .reg_map_tube(reg_map_tube),
         .func3(funct3),
         .func7(funct7)
     );
@@ -137,7 +142,7 @@ module datapath(
     data_memory data_memory_inst(
         .clk(clk),
         .MemWrite(MemWrite),
-        .ALUResult(ALUResult),
+        .ALUResult(ALUResult[13:0]),
         .R_data2(R_data_2),
         .ram_data_out(ram_data_out)
     );
@@ -149,8 +154,10 @@ module datapath(
     always @(*) begin
         if (MemtoReg) begin
             W_data = ram_data_out;
-        end
-        else begin
+        end else
+        if (ecall) begin
+            W_data = keyboard_in;
+        end else begin
             W_data = ALUResult;
         end
     end

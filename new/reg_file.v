@@ -1,6 +1,7 @@
 module reg_file(
     input clk,
-    inout reset,
+    input reset,
+    input stop_flag,
     input [4:0] R_reg_1,
     input [4:0] R_reg_2,
     input [4:0] W_reg,
@@ -10,12 +11,14 @@ module reg_file(
     input [2:0] func3,
 
     output reg [31:0] R_data_1,
-    output reg [31:0] R_data_2
+    output reg [31:0] R_data_2,
+    output [31:0] reg_map_tube
 );
 
-    reg[31:0] register[0:31];
+    reg [31:0] register[0:31];
 
-    // assign R_data_1 = register[R_reg_1];
+    // directly map last register to tube
+    assign reg_map_tube = register[5'b11111];
 
     always @(*) begin
         //sb
@@ -58,6 +61,11 @@ module reg_file(
                 else if (func7 == 7'b0000011 && func3 == 3'b101) begin
                     register[W_reg] <= {{16{1'b0}}, W_data[15:0]};
                 end
+                // ecall
+                else if (stop_flag) begin
+                    // read the data to a0 register
+                    register[5'b01010] <= W_data;
+                end
                 else begin
                     register[W_reg] <= W_data;
                 end
@@ -66,6 +74,3 @@ module reg_file(
     end
     
 endmodule
-
-    // input stop_flag,
-    //     end else if (!stop_flag) begin

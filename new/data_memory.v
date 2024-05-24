@@ -29,13 +29,13 @@ module data_memory(
     //     .wea   (~kickoff ? upg_wen_i : ram_wen_i)
     // );
 
-prgram data_memory (
-    .clka(ram_clk),
-    .addra(ALUResult),
-    .dina(R_data2),
-    .douta(ram_data_out),
-    .wea(MemWrite)
-);
+    prgram data_memory (
+        .clka(ram_clk),
+        .addra(ALUResult),
+        .dina(R_data2),
+        .douta(ram_data_out),
+        .wea(MemWrite)
+    );
 
 
 endmodule

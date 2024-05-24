@@ -42,11 +42,19 @@ module tube(
         end
     end
 
-    reg [4:0] half_byte_in;
+    reg [3:0] half_byte_in;
 
     always @* begin
         case (tube_scan)
-            8'b1111_1110: half_byte_in = {1, reg_data[3:0]};        
+            8'b1111_1110: half_byte_in = reg_data[3:0];
+            8'b1111_1101: half_byte_in = reg_data[7:4];
+            8'b1111_1011: half_byte_in = reg_data[11:8];
+            8'b1111_0111: half_byte_in = reg_data[15:12];
+            8'b1110_1111: half_byte_in = reg_data[19:16];
+            8'b1101_1111: half_byte_in = reg_data[23:20];
+            8'b1011_1111: half_byte_in = reg_data[27:24];
+            8'b0111_1111: half_byte_in = reg_data[31:28];
+            default: half_byte_in = 4'b0000;
         endcase
     end
 
