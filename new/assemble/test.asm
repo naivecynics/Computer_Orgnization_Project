@@ -9,11 +9,9 @@
 
 #²âÊÔbeq
 main:
-    li x1, 10
+    li x1, 9
     li x2, 10
-    beq x1, x2, end
-    li x3, 1
     j end
-
+    li x1,11111
 end:
     li x4, 0

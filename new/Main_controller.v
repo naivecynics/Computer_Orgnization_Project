@@ -176,7 +176,7 @@ module main_controller (
             endcase
         end
         else if (opcode == `jal) begin
-            ALU_control = 4'b0000; // add   
+            ALU_control = 4'b0011; // special case 
         end
         else if (opcode == `jalr) begin
             ALU_control = 4'b0000; // add
