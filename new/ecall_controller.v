@@ -1,7 +1,8 @@
 `include "parameters.v"
 
 module ecall_controller (
-    input clk,
+    input clk_100,
+    input clk_23,
     input finish,
     input [6:0] opcode,
     input [2:0] funct3,
@@ -9,21 +10,21 @@ module ecall_controller (
     output reg ecall
 );
 
-    reg finish_one;
+    reg finish_reg;
     reg pause;
 
-    always @ (posedge clk) begin
-        finish_one <= finish;
+    always @ (posedge clk_23) begin
+        finish_reg <= finish;
     end
 
-    always @ (posedge clk) begin
-        if (finish && finish_one)
+    always @ (posedge clk_23) begin
+        if (finish && !finish_reg)
             pause <= 1;
         else
             pause <= 0;
     end
 
-    always @ (posedge clk, posedge pause) begin
+    always @ (posedge clk_100, posedge pause) begin
         if (pause)
             ecall <= 0;
         else

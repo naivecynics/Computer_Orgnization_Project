@@ -37,8 +37,8 @@ module top_tb1();
         forever #10 clk = ~clk;
         #50 rst = 0;
         #10000 rst = 1;
-        #900 finish = 1;
-        #1100 finish = 0;
+        #10300 finish = 1;
+        // #1100 finish = 0;
     join
 
 endmodule

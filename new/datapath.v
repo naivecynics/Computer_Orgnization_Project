@@ -80,7 +80,8 @@ module datapath(
     );
 
     ecall_controller ecall_controller_inst (
-        .clk(clk_100),
+        .clk_100(clk_100),
+        .clk_23(clk),
         .finish(finish),
         .opcode(opcode),
         .funct3(funct3),
