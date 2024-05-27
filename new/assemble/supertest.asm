@@ -48,6 +48,11 @@ case1:
     #提取符号位 1bit
     #li a0,0xca50
     ecall
+    mv a3,a0
+    slli a3,a3,8
+    ecall
+    add a0,a0,a3
+    
     li a3, 1
     slli a3,a3,15
     and t1,a0,a3
@@ -94,6 +99,10 @@ case1:
 case2:
     #li a0,0xca50
     ecall
+    mv a3,a0
+    slli a3,a3,8
+    ecall
+    add a0,a0,a3
     #提取符号位 1bit
     li a3,1
     slli a3,a3,15
@@ -141,6 +150,10 @@ case2:
 case3:
     #li a0,0x4a50
     ecall
+    mv a3,a0
+    slli a3,a3,8
+    ecall
+    add a0,a0,a3
     #提取符号位 1bit
     li a3,1
     slli a3,a3,15
@@ -229,7 +242,7 @@ case5:
     ecall
     add a5, a0, zero
     li t1, 16
-    bge a5, t1, check_12bit
+    blt a5, t1, check_12bit
     slli a4, a4, 8
     add a4, a5, a4
     beq zero, zero, print
