@@ -1,3 +1,3 @@
-li x1, 7
-li x2, 8
+li x1, 46
+li x2, 89
 add x31, x1, x2

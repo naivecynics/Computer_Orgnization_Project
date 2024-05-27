@@ -1,6 +1,6 @@
 `include "parameters.v"
 
-module Main_controller (
+module main_controller (
     input [6:0] opcode,
     input [2:0] funct3,
     input [6:0] funct7,
@@ -23,23 +23,14 @@ module Main_controller (
     output auipc,
     output U_type,
     output jal,
-    output jalr,
-
-    output keyin,
-    input key_finish
+    output jalr
 );
 
 /*
 	output   [2:0]RW_type;??????????????????
 */
 
-    // ecall
-    wire ecall = (opcode == `ECALL);
-    assign keyin = (opcode == `ECALL);
-    // always @
-
-
-    //B-type
+    //B-type()
     wire B_type = (opcode == `B_type);
     assign beq = (funct3 == 3'b000) && B_type;
     assign bne = (funct3 == 3'b001) && B_type;
@@ -76,7 +67,7 @@ module Main_controller (
     end
     //RegWrite
     always @* begin
-        if (opcode == `load || opcode == `jalr || opcode == `jal || R_type || I_type || U_type || ecall) begin
+        if (opcode == `load || opcode == `jalr || opcode == `jal || R_type || I_type || U_type || opcode == `ECALL) begin
             RegWrite = 1;
         end else begin
             RegWrite = 0;

@@ -1,9 +1,15 @@
+`include "parameters.v"
+
 module datapath(
     input clk,
+    input clk_100,
     input rst_n,
-    input [31:0] keyboard_in,
-    input keyboard_finish,
-    output [31:0] reg_map_tube
+    // input [31:0] keyboard_in,
+    input [7:0] switch_in,
+    input finish,
+    output [31:0] reg_map_tube,
+    output [31:0] reg_map_led,
+    output [6:0] test_pc
 );
 
     wire [31:0] instr;
@@ -50,7 +56,7 @@ module datapath(
     wire jalr;
     wire ecall;
 
-    Main_controller Main_controller_inst (
+    main_controller main_controller_inst (
         .opcode(opcode),
         .funct3(funct3),
         .funct7(funct7),
@@ -70,9 +76,15 @@ module datapath(
         .auipc(auipc),
         .U_type(U_type),
         .jal(jal),
-        .jalr(jalr),
-        .keyin(ecall),
-        .key_finish(keyboard_finish)
+        .jalr(jalr)
+    );
+
+    ecall_controller ecall_controller_inst (
+        .clk(clk_100),
+        .finish(finish),
+        .opcode(opcode),
+        .funct3(funct3),
+        .ecall(ecall)
     );
 
     // instantiating the program counter
@@ -92,6 +104,7 @@ module datapath(
         .pc_out(pc_out)
     );
 
+    assign test_pc = pc_out[8:2];
 
     // instantiating the register file
 
@@ -99,10 +112,11 @@ module datapath(
     wire [31:0] R_data_1;
     wire [31:0] R_data_2;
 
-    reg_file regfile_inst(
+    reg_file regfile_file_inst(
         .clk(clk),
         .reset(rst_n),
         .stop_flag(ecall),
+        .W_data_io({24'b000000000000000000000000, switch_in}),
         .R_reg_1(rs1),
         .R_reg_2(rs2),
         .W_reg(rd),
@@ -111,8 +125,10 @@ module datapath(
         .R_data_1(R_data_1),
         .R_data_2(R_data_2),
         .reg_map_tube(reg_map_tube),
+        .reg_map_led(reg_map_led),
         .func3(funct3),
-        .func7(funct7)
+        .func7(funct7),
+        .opcode(opcode)
     );
     // instantiating the ALU
 
@@ -154,9 +170,6 @@ module datapath(
     always @(*) begin
         if (MemtoReg) begin
             W_data = ram_data_out;
-        end else
-        if (ecall) begin
-            W_data = keyboard_in;
         end else begin
             W_data = ALUResult;
         end

@@ -40,22 +40,22 @@
 
     // tube.v
 `define		TUBE_SCAN		50000
-`define     ZERO            ~8'b1111_1100
-`define     ONE             ~8'b0110_0000
-`define     TWO             ~8'b1101_1010
-`define     THREE           ~8'b1111_0010
-`define     FOUR            ~8'b0110_0110
-`define     FIVE            ~8'b1011_0110
-`define     SIX             ~8'b1011_1110
-`define     SEVEN           ~8'b1110_0000
-`define     EIGHT           ~8'b1111_1110
-`define     NINE            ~8'b1111_0110
-`define     A               ~8'b1110_1110
-`define     B               ~8'b0011_1110
-`define     C               ~8'b1001_1100
-`define     D               ~8'b0111_1010
-`define     E               ~8'b1001_1110
-`define     F               ~8'b1001_0110
+`define     ZERO            8'b1111_1100
+`define     ONE             8'b0110_0000
+`define     TWO             8'b1101_1010
+`define     THREE           8'b1111_0010
+`define     FOUR            8'b0110_0110
+`define     FIVE            8'b1011_0110
+`define     SIX             8'b1011_1110
+`define     SEVEN           8'b1110_0000
+`define     EIGHT           8'b1111_1110
+`define     NINE            8'b1111_0110
+`define     A               8'b1110_1110
+`define     B               8'b0011_1110
+`define     C               8'b1001_1100
+`define     D               8'b0111_1010
+`define     E               8'b1001_1110
+`define     F               8'b1000_1110
 
     // keypad.v
 `define     KEY_IDLE        5'b00000
