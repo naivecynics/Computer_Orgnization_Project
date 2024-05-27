@@ -1,5 +1,4 @@
 module top_tb1();
-    reg clk, rst;
     wire [7:0] tube_scan;
     wire [7:0] tube_signal;
 
@@ -8,11 +7,9 @@ module top_tb1();
     wire tx;
     cpu_top dut (
         .clk_100(clk),
-        .rst_n(rst),
+        .rst(rst),
         .tube_scan(tube_scan),
         .tube_signal(tube_signal),
-       .fpga_clk(clk),
-       .fpga_rst_n(rst_n),
        .start_pg(start_pg),
        .rx(rx),
        .tx(tx)
@@ -29,9 +26,6 @@ module top_tb1();
     initial fork
         switch_in = 8'b00000111;
         clk = 0;
-        rst = 0;
-        #101200 rst = 1;
-        #101400 rst = 0;
         rst_n = 1;
         start_pg = 1;
         rx = 1;

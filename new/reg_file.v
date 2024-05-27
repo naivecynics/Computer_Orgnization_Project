@@ -38,17 +38,16 @@ module reg_file(
 
     always @(*) begin
         //sb
-        if (func7 == 7'b0100011 && func3 == 3'b000) begin
+        if (opcode == 7'b0100011 && func3 == 3'b000) begin
             R_data_2 = {{24{register[R_reg_2][7]}},register[R_reg_2][7:0]};
         end
         //sh
-        else if (func7 == 7'b0100011 && func3 == 3'b001) begin
+        else if (opcode == 7'b0100011 && func3 == 3'b001) begin
             R_data_2 = {{16{register[R_reg_2][15]}},register[R_reg_2][15:0]};
         end
         //sw
         else begin
             R_data_2 = register[R_reg_2];
-            R_data_1 = register[R_reg_1];
         end
     end
 
