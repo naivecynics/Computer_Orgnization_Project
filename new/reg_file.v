@@ -1,6 +1,9 @@
 `include "parameters.v"
 
 module reg_file(
+    input MemtoReg,
+    input [31:0] ram_data_out,
+
     input clk,
     input reset,
     input stop_flag,
@@ -52,6 +55,28 @@ module reg_file(
             end 
         end else if (!stop_flag) begin
             if (W_en && W_reg != 5'b00000) begin
+                if (MemtoReg) begin
+                //lb
+                if (opcode == 7'b0000011 && func3 == 3'b000) begin
+                    register[W_reg] <= {{24{ram_data_out[7]}}, ram_data_out[7:0]};
+                end
+                //lh
+                else if (opcode == 7'b0000011 && func3 == 3'b001) begin
+                    register[W_reg] <= {{16{ram_data_out[15]}}, ram_data_out[15:0]};
+                end
+                //lbu
+                else if (opcode == 7'b0000011 && func3 == 3'b100) begin
+                    register[W_reg] <= {{24{1'b0}}, ram_data_out[7:0]};
+                end
+                //lhu
+                else if (opcode == 7'b0000011 && func3 == 3'b101) begin
+                    register[W_reg] <= {{16{1'b0}}, ram_data_out[15:0]};
+                end
+                else begin
+                    register[W_reg] <= ram_data_out;
+                end    
+                end
+                else begin
                 //lb
                 if (opcode == 7'b0000011 && func3 == 3'b000) begin
                     register[W_reg] <= {{24{W_data[7]}}, W_data[7:0]};
@@ -71,6 +96,8 @@ module reg_file(
                 else begin
                     register[W_reg] <= W_data;
                 end
+                end
+                
             end
         // ecall
             else if (W_en && opcode == `ECALL) begin

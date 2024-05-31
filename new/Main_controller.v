@@ -179,7 +179,7 @@ module main_controller (
             ALU_control = 4'b0011; // special case 
         end
         else if (opcode == `jalr) begin
-            ALU_control = 4'b0000; // add
+            ALU_control = 4'b0011; // special case
         end
         else if (opcode == `lui) begin
             ALU_control = 4'b0111; // lui

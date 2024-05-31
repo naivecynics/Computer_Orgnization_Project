@@ -5,6 +5,7 @@
 
 main:
     lui x29, 0xffff0
+    
     #li a0, 6
     ecall
     li t0, 0
@@ -21,6 +22,8 @@ main:
     beq t0, a0, case5
     li t0, 6
     beq t0, a0, case6
+    li t0, 7
+    beq t0, a0, case7
     j end
     
 
@@ -256,7 +259,7 @@ case6:
      #li a3, 11
      ecall
      mv a3,a0
-     
+     li sp,1024
      li a1, 0
      li a2, 1
      li x31, 0 #´ð°¸
@@ -282,6 +285,40 @@ case6:
 	addi sp,sp,8
 	jr ra
 	
+case7:
+     #li a3, 11
+     ecall
+     mv a3,a0
+     li sp,1024
+     li a1, 0
+     li a2, 1
+     li x31, 0 #´ð°¸
+     jal fib2
+     j end
+     
+     fib2:
+     	addi sp,sp,-8
+     	sw ra, 4(sp)
+     	sw a2, 0(sp)
+     	mv x31,ra
+     	ecall
+     	mv x31,a2
+     	ecall
+     	slt t0,a3,a2
+     	beq t0,zero, L2
+     	addi sp,sp,8
+     	jr ra
+     
+     L2:
+     	mv t1,a1
+     	mv a1,a2
+     	add a2,a2,t1
+     	jal fib2
+     	addi x31,x31,1
+	lw ra,4(sp)
+	addi sp,sp,8
+	jr ra
+
 end:
     #li a7,1
     #mv a0,x31

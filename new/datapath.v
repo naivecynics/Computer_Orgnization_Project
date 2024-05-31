@@ -20,8 +20,9 @@ module datapath(
     wire [4:0] rs2;
     wire [4:0] rd;
     wire [31:0] imme;
-    
-
+    //////////////////////////
+    wire [31:0] ram_data_out;
+    /////////////////////////////
     //instantiating the instruction decoder
 
     instr_decoder instr_decoder_inst(
@@ -114,6 +115,8 @@ module datapath(
     wire [31:0] R_data_2;
 
     reg_file regfile_file_inst(
+        .MemtoReg(MemtoReg),
+        .ram_data_out(ram_data_out),
         .clk(clk),
         .reset(rst_n),
         .stop_flag(ecall),
@@ -155,7 +158,7 @@ module datapath(
 
     // data memory module
 
-    wire [31:0] ram_data_out;
+    
     data_memory data_memory_inst(
         .clk(clk),
         .MemWrite(MemWrite),
@@ -168,11 +171,31 @@ module datapath(
     //mux for selecting data to be written to the register file
 
 
-    always @(*) begin
-        if (MemtoReg) begin
-            W_data = ram_data_out;
-        end else begin
-            W_data = ALUResult;
+    // always @ * begin
+    //     if (MemtoReg) begin
+    //          W_data = ram_data_out;
+    //     end 
+    // end
+
+
+    always @ (negedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            W_data = 32'b0;
+        end 
+        else begin
+            // if (MemtoReg) begin
+            //     W_data = ram_data_out;
+            //     // negedge read ram_data_out
+            //     // negedge write W_data too
+            //     // tobe 
+            // end 
+            // else 
+            if (jal||jalr) begin
+                W_data = ALUResult - imme + 4;
+            end
+            else begin
+                W_data = ALUResult;
+            end
         end
     end
 

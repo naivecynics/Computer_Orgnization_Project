@@ -10,7 +10,11 @@ module cpu_top(
 
     // test
     output [7:0] test_pc,
-    output [7:0] switch
+    output [7:0] switch,
+
+    //keyboard
+    input keyboard_clk,
+    input keyboard_data
 );
 
     wire clk_23;    // for cpu  - 23 MHz (5 MHz)
@@ -47,11 +51,35 @@ module cpu_top(
     tube tube_inst(
         .clk(clk_100),
         .rst_n(rst_n_),
-        .reg_data(reg_map_tube),
+        // .reg_data(reg_map_tube),
+        .reg_data(reg_data),
         .tube_scan(tube_scan),
         .tube_signal_left(tube_signal_left),
         .tube_signal_right(tube_signal_right)   
     );
+
+    
+   
+    wire [15:0] keyboard_out;
+    wire [31:0] reg_data;
+    wire enter;
+
+    PS2 PS2_inst(
+        .clk(clk_100),
+        .rst_n(rst_n),
+        .PS2D(keyboard_data),
+        .PS2C(keyboard_clk),
+        .key(keyboard_out)
+    );
+
+    process_keyboard process_keyboard_inst(
+        .clk(clk_100),
+        .rst_n(rst_n),
+        .keyboard_in(keyboard_out),
+        .reg_data(reg_data),
+        .enter(enter)
+    );
+
 
     datapath datapath_inst(
         .clk(clk_23),
@@ -59,7 +87,7 @@ module cpu_top(
         .rst_n(rst_n_),
         // .keyboard_in(keyboard_in),
         .switch_in(switch_in),
-        .finish(finish_),
+        .finish(finish_ | enter),
         .reg_map_tube(reg_map_tube),
         .reg_map_led(reg_map_led),
         .test_pc(test_pc[6:0])
