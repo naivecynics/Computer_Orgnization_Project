@@ -13,7 +13,17 @@ module datapath(
 
     output [31:0] reg_map_tube,
     output [31:0] reg_map_led,
-    output [6:0] test_pc
+    output [6:0] test_pc,
+
+    input [31:0] keyboard_in,
+    input keyboard_finish,
+
+    input upg_rst,
+    input upg_clk_o,
+    input upg_wen_o,
+    input [14:0] upg_adr_o,
+    input [31:0] upg_dat_o,
+    input upg_done_o
 );
 
     wire [31:0] instr;
@@ -105,6 +115,11 @@ module datapath(
 
     // instantiating the program counter
     
+    
+    wire jump_flag;
+    wire [31:0] ALUResult;
+    wire [31:0] pc_out;
+    
     pc pc_inst(
         .clk(clk),
         .rst_n(rst_n),
@@ -112,7 +127,13 @@ module datapath(
         .jump_flag(jump_flag),
         .stop_flag(ecall),   
         .inst(instr),
-        .pc_out(pc_out)
+        .pc_out(pc_out),
+        .upg_rst_i(upg_rst),
+        .upg_clk_i(upg_clk_o),
+        .upg_wen_i(upg_wen_o & !upg_adr_o[14]),
+        .upg_adr_i(upg_adr_o[13:0]),
+        .upg_dat_i(upg_dat_o),
+        .upg_done_i(upg_done_o)
     );
 
     // instantiating the register file
@@ -170,7 +191,13 @@ module datapath(
         .MemWrite(MemWrite),
         .ALUResult(ALUResult[13:0]),
         .R_data2(R_data_2),
-        .ram_data_out(ram_data_out)
+        .ram_data_out(ram_data_out),
+        .upg_rst_i(upg_rst),
+        .upg_clk_i(upg_clk_o),
+        .upg_wen_i(upg_wen_o & upg_adr_o[14]),
+        .upg_adr_i(upg_adr_o[13:0]),
+        .upg_dat_i(upg_dat_o),
+        .upg_done_i(upg_done_o)
     );
 
 

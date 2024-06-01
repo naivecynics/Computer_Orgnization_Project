@@ -16,25 +16,23 @@ module data_memory(
 );
 
     wire ram_clk = !clk;
+    wire kickOff = upg_rst_i | (!upg_rst_i & upg_done_i);
 
-    // 1 : normal mode
-    // 0 : program mode
-    // wire kickoff = upg_rst_i s| (~upg_wen_i & upg_done_i);
 
     // prgram data_memory (
-    //     .clka  (~kickoff ? upg_clk_i : ram_clk),
-    //     .addra (~kickoff ? upg_adr_i : ram_adr_i),
-    //     .dina  (~kickoff ? upg_dat_i : ram_dat_i),
-    //     .douta (~kickoff ? upg_dat_i : ram_dat_o),
-    //     .wea   (~kickoff ? upg_wen_i : ram_wen_i)
+    //     .clka(ram_clk),
+    //     .addra(ALUResult),
+    //     .dina(R_data2),
+    //     .douta(ram_data_out),
+    //     .wea(MemWrite)
     // );
 
     prgram data_memory (
-        .clka(ram_clk),
-        .addra(ALUResult),
-        .dina(R_data2),
+        .clka(kickOff ? ram_clk : upg_clk_i),
+        .addra(kickOff ? ALUResult : upg_adr_i),
+        .dina(kickOff ? R_data2 : upg_dat_i),
         .douta(ram_data_out),
-        .wea(MemWrite)
+        .wea(kickOff ? MemWrite : upg_wen_i)
     );
 
 
