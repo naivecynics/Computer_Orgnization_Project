@@ -1,17 +1,14 @@
 `include "../parameters.v"
 
-module debounce(
+module keyboard_debouncer (
     input clk,
-    // input [15:0] tempkey,
-    input tempkey,
-    // output reg [15:0] finalkey
-    output reg finalkey
-    );
+    input [15:0] tempkey,
+    output reg [15:0] finalkey
+);
     
-    // reg [15:0] key_prev;
-    reg key_prev;
-    // reg [15:0] key_debounced;
-    reg key_debounced;
+    reg [15:0] key_prev;
+    reg [15:0] key_debounced;
+
     reg [23:0] debounce_counter;
     
     always @(posedge clk) begin

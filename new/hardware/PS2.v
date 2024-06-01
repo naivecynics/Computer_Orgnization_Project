@@ -1,6 +1,6 @@
 module PS2 (
     input           clk,
-    input           rst,
+    input           rst_n,
     input           PS2D,
     input           PS2C,
     output [15:0]   key
@@ -16,15 +16,15 @@ module PS2 (
     wire [15:0] tempkey;
     assign      tempkey={ shift2[8:1], shift1[8:1] };
 
-    debouncer u1(
-            .clk(clk),
-            .tempkey(tempkey),
-            .finalkey(key)
+    keyboard_debouncer keyboard_debouncer_inst(
+        .clk(clk),
+        .tempkey(tempkey),
+        .finalkey(key)
     );
 
-    always@( posedge clk or posedge rst )
+    always@( posedge clk or negedge rst_n )
     begin
-        if( rst )
+        if( !rst_n )
         begin
             ps2c            <= 1;
             ps2d            <= 1;
@@ -51,9 +51,9 @@ module PS2 (
         end
     end
 
-    always@( negedge ps2c or posedge rst )
+    always@( negedge ps2c or negedge rst_n )
     begin
-        if ( rst )
+        if ( !rst_n )
         begin
             shift1 <= 0;
             shift2 <= 0;

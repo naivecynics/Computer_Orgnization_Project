@@ -1,7 +1,7 @@
 `include "../parameters.v"
 
 module tube(
-    input clk,      // 100MHz
+    input clk,          // 100MHz
     input rst_n,
     input [31:0] reg_data,
 
@@ -9,8 +9,6 @@ module tube(
     output reg [7:0] tube_signal_left,
     output reg [7:0] tube_signal_right
 );
-
-    // parameter reg_data = 32'h56789abc; 
 
     // slow clock
 
@@ -36,14 +34,14 @@ module tube(
 
     always @(posedge slow_clk or negedge rst_n) begin
         if (!rst_n) begin
-            // tube_scan <= ~8'b1111_1110;
             tube_scan <= ~8'b1110_1110;
         end
         else begin
-            // tube_scan <= {tube_scan[6:0], tube_scan[7]};
             tube_scan <= {tube_scan[6:4], tube_scan[7], tube_scan[2:0], tube_scan[3]};
         end
     end
+
+    // input signal map
 
     reg [3:0] input_left;
     reg [3:0] input_right;
@@ -73,7 +71,7 @@ module tube(
         endcase
     end
 
-    // tube signal
+    // tube signal map
 
     always @* begin
         case (input_left)

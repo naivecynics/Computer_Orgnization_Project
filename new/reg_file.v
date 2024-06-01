@@ -1,8 +1,6 @@
 `include "parameters.v"
 
 module reg_file(
-    input MemtoReg,
-    input [31:0] ram_data_out,
 
     input clk,
     input reset,
@@ -12,8 +10,15 @@ module reg_file(
     input [4:0] R_reg_2,
     input [4:0] W_reg,
     input [31:0] W_data,
-    input [31:0] W_data_io,
+    // input [31:0] W_data_io,
+
+    /*  write data sources  */
+    input [7:0] switch,
+    input [31:0] keyboard,
+    input [31:0] ram_data_out,
+    /*  controllers  */
     input W_en,
+    input MemtoReg,
     input [6:0] func7,
     input [2:0] func3,
     input [6:0] opcode,
@@ -24,6 +29,7 @@ module reg_file(
     output [31:0] reg_map_led  
 );
 
+    // registers
     reg [31:0] register[0:31];
 
     // directly map last register to tube
@@ -102,7 +108,7 @@ module reg_file(
         // ecall
             else if (W_en && opcode == `ECALL) begin
                 // read the data to a0 register
-                register[5'b01010] <= W_data_io;
+                register[5'b01010] <= keyboard;
             end
         end
     end

@@ -1,23 +1,23 @@
-module cpu_top(
+module cpu_top (
+    /*  system  */
     input clk_100,
     input rst_n,
-    // input [31:0] keyboard_in,
-    input [7:0] switch_in,
+
+    /*  hardware  */
+    input keyboard_clk,
+    input keyboard_data,
     input finish,
+    input [7:0] switch,
+    input [7:0] small_switch,
+
+    output [7:0] led,
+    output [7:0] small_led,
     output [7:0] tube_scan,
     output [7:0] tube_signal_left,
-    output [7:0] tube_signal_right,
-
-    // test
-    output [7:0] test_pc,
-    output [7:0] switch,
-
-    //keyboard
-    input keyboard_clk,
-    input keyboard_data
+    output [7:0] tube_signal_right
 );
 
-    wire clk_23;    // for cpu  - 23 MHz (5 MHz)
+    wire clk_23;    // for cpu  - 23 MHz
     wire clk_10;    // for UART - 10 MHz   
 
     wire rst_n_;
@@ -25,10 +25,16 @@ module cpu_top(
 
     wire [31:0] reg_map_tube;
     wire [31:0] reg_map_led;
-    assign switch = reg_map_led[7:0];
+    assign led = reg_map_led[7:0];
     
     // test light
-    assign test_pc[7] = finish;
+    // assign test_pc[7] = finish;
+
+    // keyboard
+    wire [15:0] keyboard_out;
+    wire [31:0] reg_data;
+    wire [31:0] keyboard;
+    wire enter;
 
     debounce debounce_reset(
         .clk(clk_100),
@@ -51,18 +57,11 @@ module cpu_top(
     tube tube_inst(
         .clk(clk_100),
         .rst_n(rst_n_),
-        // .reg_data(reg_map_tube),
-        .reg_data(reg_data),
+        .reg_data(small_switch[0] ? reg_data : reg_map_tube),
         .tube_scan(tube_scan),
         .tube_signal_left(tube_signal_left),
         .tube_signal_right(tube_signal_right)   
     );
-
-    
-   
-    wire [15:0] keyboard_out;
-    wire [31:0] reg_data;
-    wire enter;
 
     PS2 PS2_inst(
         .clk(clk_100),
@@ -75,22 +74,23 @@ module cpu_top(
     process_keyboard process_keyboard_inst(
         .clk(clk_100),
         .rst_n(rst_n),
-        .keyboard_in(keyboard_out),
-        .reg_data(reg_data),
+        .keyboard_out(keyboard_out),
+        .temp_data(reg_data),
+        .reg_data(keyboard),
+        .mono_clk(small_led[7]),    // pressed signal
         .enter(enter)
     );
-
 
     datapath datapath_inst(
         .clk(clk_23),
         .clk_100(clk_100),
         .rst_n(rst_n_),
-        // .keyboard_in(keyboard_in),
-        .switch_in(switch_in),
+        .switch_in(switch),
+        .keyboard_in(keyboard),
         .finish(finish_ | enter),
         .reg_map_tube(reg_map_tube),
         .reg_map_led(reg_map_led),
-        .test_pc(test_pc[6:0])
+        .test_pc(small_led[6:0])
     );
 
 endmodule
