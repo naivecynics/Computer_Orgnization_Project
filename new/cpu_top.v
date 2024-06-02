@@ -83,7 +83,7 @@ module cpu_top (
     // ps2 keyboard controller
     PS2 PS2_inst(
         .clk(clk_100),
-        .rst_n(rst_n),
+        .rst_n(rst_n_),
         .PS2D(keyboard_data),
         .PS2C(keyboard_clk),
         .key(keyboard_out)
