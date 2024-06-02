@@ -19,11 +19,7 @@ module cpu_top (
     /*  uart  */
     input start_pg,
     input rx,
-    output tx,
-
-    // test
-    output [7:0] test_pc,
-    output [7:0] switch
+    output tx
 );
 
     wire clk_23;    // for cpu  - 23 MHz
@@ -46,30 +42,35 @@ module cpu_top (
     wire [31:0] keyboard;
     wire enter;
 
+    // reset buttun debouncer
     debounce debounce_reset(
         .clk(clk_100),
         .tempkey(rst_n),
         .finalkey(rst_n_)
     );
     
+    // start_pg debouncer
     debounce debounce_start_pg(
         .clk(clk_100),
         .tempkey(start_pg),
         .finalkey(start_pg_)
     );
 
+    // finish debouncer
     debounce debounce_finish(
         .clk(clk_100),
         .tempkey(finish),
         .finalkey(finish_)
     );
 
+    // cpu clock
     cpuclk cpuclk_inst(
         .clk_in1(clk_100),
         .clk_out1(clk_23),
         .clk_out2(upg_clk)
     );
 
+    // 7-seg tube controller
     tube tube_inst(
         .clk(clk_100),
         .rst_n(rst_n_),
@@ -79,6 +80,7 @@ module cpu_top (
         .tube_signal_right(tube_signal_right)   
     );
 
+    // ps2 keyboard controller
     PS2 PS2_inst(
         .clk(clk_100),
         .rst_n(rst_n),
@@ -87,6 +89,7 @@ module cpu_top (
         .key(keyboard_out)
     );
 
+    // keyboard process controller
     process_keyboard process_keyboard_inst(
         .clk(clk_100),
         .rst_n(rst_n),
@@ -97,6 +100,7 @@ module cpu_top (
         .enter(enter)
     );
 
+    // cpu datapath
     datapath datapath_inst(
         .clk(clk_23),
         .clk_100(clk_100),
@@ -116,6 +120,7 @@ module cpu_top (
         .upg_done_o(upg_done_o)
     );
 
+    // uart ip core
     uart_bmpg_0 uart_bmpg_0_inst(
         .upg_clk_i(upg_clk),
         .upg_rst_i(upg_rst),
@@ -134,14 +139,17 @@ module cpu_top (
     wire [14:0] upg_adr_o;
     wire[31:0] upg_dat_o;
     wire spg_bufg;
-    BUFG U1(.I(start_pg), .O(spg_bufg));
 
+    BUFG U1(.I(start_pg), .O(spg_bufg));
+    
+    // uart reset logic  
     reg upg_rst;
     always@ (posedge clk_100) begin
         if (spg_bufg) upg_rst <= 1'b0;
         if (!rst_n_) upg_rst <= 1'b1;
     end
 
+    // final rst signal
     wire rst;
     assign rst = rst_n_ & upg_rst;
 

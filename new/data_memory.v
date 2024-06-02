@@ -18,7 +18,6 @@ module data_memory(
     wire ram_clk = !clk;
     wire kickOff = upg_rst_i | (!upg_rst_i & upg_done_i);
 
-
     // prgram data_memory (
     //     .clka(ram_clk),
     //     .addra(ALUResult),

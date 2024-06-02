@@ -1,9 +1,9 @@
 module pc(
     input clk,
     input rst_n,
-    input [31:0] ALU_result,    // jump address
     input stop_flag,            // ecall
     input jump_flag,
+    input [31:0] ALU_result,    // jump address
     output [31:0] inst,
     output reg [31:0] pc_out,
 
@@ -29,8 +29,7 @@ module pc(
     always @* begin
         if (stop_flag == 1) begin
             next_pc = pc_out;
-        end else
-        if (jump_flag == 1) begin
+        end else if (jump_flag == 1) begin
             next_pc = ALU_result;
         end else begin
             next_pc = pc_out + 4;
@@ -38,7 +37,7 @@ module pc(
     end
 
 
-wire kickOff = upg_rst_i | (!upg_rst_i & upg_done_i);
+    wire kickOff = upg_rst_i | (!upg_rst_i & upg_done_i);
 
     // prgrom prgrom_inst(
     //     .clka(clk),

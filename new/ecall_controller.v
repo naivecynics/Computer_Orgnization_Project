@@ -10,6 +10,7 @@ module ecall_controller (
     output reg ecall
 );
 
+    // pause: monopulse generate
     reg finish_reg;
     reg pause;
 
@@ -24,19 +25,12 @@ module ecall_controller (
             pause <= 0;
     end
 
+    // ecall signals
     always @ (posedge clk_100, posedge pause) begin
         if (pause)
             ecall <= 0;
         else
             ecall <= (opcode == `ECALL);
     end
-
-    // always @ (posedge clk, posedge finish) begin
-    //     if (finish) begin
-    //         ecall <= 0;
-    //     end else begin
-    //         ecall <= (opcode == `ECALL);
-    //     end
-    // end
 
 endmodule

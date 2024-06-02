@@ -107,7 +107,13 @@ module reg_file(
         // ecall
             else if (W_en && opcode == `ECALL) begin
                 // read the data to a0 register
-                register[5'b01010] <= keyboard;
+                // a7 == register[17]: system call parameter
+                if (register[17] == 0) begin
+                    register[5'b01000] <= {24'h000000, switch};
+                end else
+                if (register[17] == 1) begin
+                    register[5'b01010] <= keyboard;
+                end
             end
         end
     end

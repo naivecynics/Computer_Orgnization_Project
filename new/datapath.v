@@ -15,7 +15,6 @@ module datapath(
     output [31:0] reg_map_led,
     output [6:0] test_pc,
 
-    input [31:0] keyboard_in,
     input keyboard_finish,
 
     input upg_rst,
@@ -114,11 +113,6 @@ module datapath(
     );
 
     // instantiating the program counter
-    
-    
-    wire jump_flag;
-    wire [31:0] ALUResult;
-    wire [31:0] pc_out;
     
     pc pc_inst(
         .clk(clk),
