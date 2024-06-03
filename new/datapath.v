@@ -9,14 +9,14 @@ module datapath(
     /*  hardware  */
     input [31:0] keyboard_in,
     input [7:0] switch_in,
+    input keyboard_finish,
     input finish,
 
     output [31:0] reg_map_tube,
     output [31:0] reg_map_led,
-    output [6:0] test_pc,
+    output [5:0] test_pc,
 
-    input keyboard_finish,
-
+    // uart
     input upg_rst,
     input upg_clk_o,
     input upg_wen_o,
@@ -61,7 +61,7 @@ module datapath(
     wire [31:0] R_data_2;
 
     // debug: map pc to small led
-    assign test_pc = pc_out[8:2];
+    assign test_pc = pc_out[7:2];
 
     // instantiating the instruction decoder
 

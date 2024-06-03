@@ -18,15 +18,15 @@ module mem_or_io(
    output SwitchCtrl  // Switch Chip Select
 );
 
-assign addr_out = addr_in;
-// The data wirte to register file may be from memory or io. 
-// While the data is from io, it should be the lower 16bit of r_wdata.
+    assign addr_out = addr_in;
+    // The data wirte to register file may be from memory or io. 
+    // While the data is from io, it should be the lower 16bit of r_wdata.
 
-// assign r_wdata = ????
+    // assign r_wdata = ????
 
-// Chip select signal of  Led and Switch  are all active high;
-// assign LEDCtrl=  ??? 
-// assign SwitchCtrl= ???
+    // Chip select signal of  Led and Switch  are all active high;
+    // assign LEDCtrl=  ??? 
+    // assign SwitchCtrl= ???
 
 always @(*) begin
     if ((mWrite == 1) || (ioWrite == 1)) begin

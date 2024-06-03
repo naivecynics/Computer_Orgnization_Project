@@ -1,11 +1,13 @@
 #register x31 connected to the digit tube
 #register x30 connected to the led light
 # input stored in a0
-#t5 t6²»ÒªÓÃ
+#t5 t6ä¸è¦ç”¨
 
 main:
     lui x29, 0xffff0
-    li a0, 6
+    
+    li a7, 1
+    ecall
     li t0, 0
     beq t0, a0, case0
     li t0, 1
@@ -20,12 +22,15 @@ main:
     beq t0, a0, case5
     li t0, 6
     beq t0, a0, case6
+    li t0, 7
+    beq t0, a0, case7
     j end
     
 
-#ÊäÈëÒ»¸ö 8bit µÄÊı£¬¼ÆËã²¢Êä³öÆäÇ°µ¼ÁãµÄ¸öÊı
+#è¾“å…¥ä¸€ä¸ª 8bit çš„æ•°ï¼Œè®¡ç®—å¹¶è¾“å‡ºå…¶å‰å¯¼é›¶çš„ä¸ªæ•°
 case0:
-    li a0,19
+    li a7,1
+    ecall
     li t1,7
     li t3,7
     li x31,0
@@ -43,34 +48,36 @@ case0:
     j end
 
 case1:
-    #ÌáÈ¡·ûºÅÎ» 1bit
-    li a0,0xca50
+    #æå–ç¬¦å·ä½ 1bit
+    li a7,1
+    ecall
+    
     li a3, 1
     slli a3,a3,15
     and t1,a0,a3
-    #ÌáÈ¡Ö¸ÊıÎ» 5bit
+    #æå–æŒ‡æ•°ä½ 5bit
     li a3, 31
     slli a3,a3,10
     and t2,a0,a3
     srli t2,t2,10
-    #ÌáÈ¡Î²ÊıÎ» 10bit
+    #æå–å°¾æ•°ä½ 10bit
     andi t3,a0,0x03ff 
-    #¼ÆËãÕıÈ·µÄÖ¸ÊıÖµ
+    #è®¡ç®—æ­£ç¡®çš„æŒ‡æ•°å€¼
     addi t2,t2,-15
-    #Ô¤´¦ÀíÒ»Ğ©Êı
+    #é¢„å¤„ç†ä¸€äº›æ•°
     li t4, 512
-    #Ö¸Êı´óÓÚµÈÓÚ0
+    #æŒ‡æ•°å¤§äºç­‰äº0
     li x31, 1
     bge t2,x0,case1_loop1
-    #Ö¸ÊıĞ¡ÓÚ0
+    #æŒ‡æ•°å°äº0
     li x31 ,0
     j case1_end
 
     case1_loop1:
         addi t2,t2,-1
-        #Ñ­»·Ìõ¼ş
+        #å¾ªç¯æ¡ä»¶
         blt t2,x0,case1_end
-        #È¡³öÎ²Êıµ±Ç°
+        #å–å‡ºå°¾æ•°å½“å‰
         and a1,t3,t4
         srli t4,t4,1
         slt a2,x0,a1
@@ -79,7 +86,7 @@ case1:
         j case1_loop1
      
      case1_end:
-     blt x0,t1 case1_neg_end
+     blt x0,t1, case1_neg_end
      addi x31,x31,1
      j end
      
@@ -89,34 +96,36 @@ case1:
      j end
 
 case2:
-    li a0,0xca50
-    #ÌáÈ¡·ûºÅÎ» 1bit
+    li a7,1
+    ecall
+   
+    #æå–ç¬¦å·ä½ 1bit
     li a3,1
     slli a3,a3,15
     and t1,a0,a3
-    #ÌáÈ¡Ö¸ÊıÎ» 5bit
+    #æå–æŒ‡æ•°ä½ 5bit
     li a3, 31
     slli a3,a3,10
     and t2,a0,a3
     srli t2,t2,10
-    #ÌáÈ¡Î²ÊıÎ» 10bit
+    #æå–å°¾æ•°ä½ 10bit
     andi t3,a0,0x03ff 
-    #¼ÆËãÕıÈ·µÄÖ¸ÊıÖµ
+    #è®¡ç®—æ­£ç¡®çš„æŒ‡æ•°å€¼
     addi t2,t2,-15
-    #Ô¤´¦ÀíÒ»Ğ©Êı
+    #é¢„å¤„ç†ä¸€äº›æ•°
     li t4, 512
-    #Ö¸Êı´óÓÚµÈÓÚ0
+    #æŒ‡æ•°å¤§äºç­‰äº0
     li x31, 1
     bge t2,x0,case2_loop1
-    #Ö¸ÊıĞ¡ÓÚ0
+    #æŒ‡æ•°å°äº0
     li x31 ,0
     j case2_end
 
     case2_loop1:
         addi t2,t2,-1
-        #Ñ­»·Ìõ¼ş
+        #å¾ªç¯æ¡ä»¶
         blt t2,x0,case2_end
-        #È¡³öÎ²Êıµ±Ç°
+        #å–å‡ºå°¾æ•°å½“å‰
         and a1,t3,t4
         srli t4,t4,1
         slt a2,x0,a1
@@ -125,7 +134,7 @@ case2:
         j case2_loop1
      
      case2_end:
-     blt x0,t1 case2_neg_end
+     blt x0,t1, case2_neg_end
      j end
      
      case2_neg_end:
@@ -135,37 +144,39 @@ case2:
      j end
      
 case3:
-    li a0,0x4a50
-    #ÌáÈ¡·ûºÅÎ» 1bit
+    li a7,1
+    ecall
+    
+    #æå–ç¬¦å·ä½ 1bit
     li a3,1
     slli a3,a3,15
     and t1,a0,a3
-    #ÌáÈ¡Ö¸ÊıÎ» 5bit
+    #æå–æŒ‡æ•°ä½ 5bit
     li a3, 31
     slli a3,a3,10
     and t2,a0,a3
     srli t2,t2,10
-    #ÌáÈ¡Î²ÊıÎ» 10bit
+    #æå–å°¾æ•°ä½ 10bit
     andi t3,a0,0x03ff 
-    #¼ÆËãÕıÈ·µÄÖ¸ÊıÖµ
+    #è®¡ç®—æ­£ç¡®çš„æŒ‡æ•°å€¼
     addi t2,t2,-15
-    #Ô¤´¦ÀíÒ»Ğ©Êı
+    #é¢„å¤„ç†ä¸€äº›æ•°
     li t4, 512
-    #Ëã³öĞ¡ÊıµÚÒ»Î»
+    #ç®—å‡ºå°æ•°ç¬¬ä¸€ä½
     li a4, 9
     sub a4,a4,t2
-    #Ö¸Êı´óÓÚµÈÓÚ0
+    #æŒ‡æ•°å¤§äºç­‰äº0
     li x31, 1
     bge t2,x0,case3_loop1
-    #Ö¸ÊıĞ¡ÓÚ0
+    #æŒ‡æ•°å°äº0
     li x31 ,0
     j case3_end
 
     case3_loop1:
         addi t2,t2,-1
-        #Ñ­»·Ìõ¼ş
+        #å¾ªç¯æ¡ä»¶
         blt t2,x0,case3_end
-        #È¡³öÎ²Êıµ±Ç°
+        #å–å‡ºå°¾æ•°å½“å‰
         and a1,t3,t4
         srli t4,t4,1
         slt a2,x0,a1
@@ -174,7 +185,7 @@ case3:
         j case3_loop1
      
      case3_end:
-     blt x0,t1 case3_neg_end
+     blt x0,t1, case3_neg_end
      addi a5,x0,1
      sll a5,a5,a4
      and a5,a5,a0
@@ -198,9 +209,11 @@ case4:
     li t2, 0
     li a1, 0
     li a2, 0
+    li a7,1
     ecall
     sw a0, 0x040(x29)
     lbu t1, 0x040(x29)
+    li a7,1
     ecall
     sw a0, 0x044(x29)
     lbu t2, 0x044(x29)
@@ -219,12 +232,14 @@ case4:
 case5:
     li a4, 0
     li a5, 0
+    li a7,0
     ecall
     add a4, a0, zero
+    li a7,0
     ecall
     add a5, a0, zero
     li t1, 16
-    bge a5, t1, check_12bit
+    blt a5, t1, check_12bit
     slli a4, a4, 8
     add a4, a5, a4
     beq zero, zero, print
@@ -235,10 +250,13 @@ case5:
     j end
 
 case6:
-     li a3, 11
+     li a7, 1
+     ecall
+     mv a3,a0
+     li sp,1024
      li a1, 0
      li a2, 1
-     li x31, 0 #´ğ°¸
+     li x31, 0 #ç­”æ¡ˆ
      jal fib
      j end
      
@@ -261,7 +279,43 @@ case6:
 	addi sp,sp,8
 	jr ra
 	
+case7:
+     li a7, 1
+     ecall
+     mv a3,a0
+     li sp,1024
+     li a1, 0
+     li a2, 1
+     li x31, 0 #ç­”æ¡ˆ
+     jal fib2
+     j end
+     
+     fib2:
+     	addi sp,sp,-8
+     	sw ra, 4(sp)
+     	sw a2, 0(sp)
+     	mv x31,ra
+     	li a7,1
+     	ecall
+     	mv x31,a2
+     	li a7,1
+     	ecall
+     	slt t0,a3,a2
+     	beq t0,zero, L2
+     	addi sp,sp,8
+     	jr ra
+     
+     L2:
+     	mv t1,a1
+     	mv a1,a2
+     	add a2,a2,t1
+     	jal fib2
+     	addi x31,x31,1
+	lw ra,4(sp)
+	addi sp,sp,8
+	jr ra
+
 end:
-    li a7,1
-    mv a0,x31
-    ecall
+    #li a7,1
+    #mv a0,x31
+    j main

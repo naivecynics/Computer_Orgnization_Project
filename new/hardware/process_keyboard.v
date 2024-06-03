@@ -43,13 +43,15 @@ module process_keyboard(
             enter <= 0;
         end
         else begin
-            if(key_data == 8'h5A) begin // Enter
+            if (enter == 1) begin
+                enter <= 0;
+            end 
+            else if (key_data == 8'h5A) begin // Enter
                 reg_data <= temp_data;
                 temp_data <= 0;
                 shift_count <= 0;
                 enter <= 1;
-            end
-            else begin
+            end else begin
                 enter <= 0;
                 case (key_data)
                     8'h66: begin // Backspace

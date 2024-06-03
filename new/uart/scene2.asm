@@ -1,6 +1,7 @@
 #register x31 connected to the digit tube
 #register x30 connected to the led light
 # input stored in a0
+#t5 t6��Ҫ��
 
 main:
     lui x29, 0xffff0
@@ -26,6 +27,7 @@ main:
     j end
     
 
+#����һ�� 8bit ���������㲢�����ǰ����ĸ���
 case0:
     #li a0,19
     ecall
@@ -46,6 +48,7 @@ case0:
     j end
 
 case1:
+    #��ȡ����λ 1bit
     #li a0,0xca50
     ecall
     mv a3,a0
@@ -56,21 +59,29 @@ case1:
     li a3, 1
     slli a3,a3,15
     and t1,a0,a3
+    #��ȡָ��λ 5bit
     li a3, 31
     slli a3,a3,10
     and t2,a0,a3
     srli t2,t2,10
+    #��ȡβ��λ 10bit
     andi t3,a0,0x03ff 
+    #������ȷ��ָ��ֵ
     addi t2,t2,-15
+    #Ԥ����һЩ��
     li t4, 512
+    #ָ�����ڵ���0
     li x31, 1
     bge t2,x0,case1_loop1
+    #ָ��С��0
     li x31 ,0
     j case1_end
 
     case1_loop1:
         addi t2,t2,-1
+        #ѭ������
         blt t2,x0,case1_end
+        #ȡ��β����ǰ
         and a1,t3,t4
         srli t4,t4,1
         slt a2,x0,a1
@@ -79,7 +90,7 @@ case1:
         j case1_loop1
      
      case1_end:
-     blt x0,t1, case1_neg_end
+     blt x0,t1 case1_neg_end
      addi x31,x31,1
      j end
      
@@ -95,24 +106,33 @@ case2:
     slli a3,a3,8
     ecall
     add a0,a0,a3
+    #��ȡ����λ 1bit
     li a3,1
     slli a3,a3,15
     and t1,a0,a3
+    #��ȡָ��λ 5bit
     li a3, 31
     slli a3,a3,10
     and t2,a0,a3
     srli t2,t2,10
+    #��ȡβ��λ 10bit
     andi t3,a0,0x03ff 
+    #������ȷ��ָ��ֵ
     addi t2,t2,-15
+    #Ԥ����һЩ��
     li t4, 512
+    #ָ�����ڵ���0
     li x31, 1
     bge t2,x0,case2_loop1
+    #ָ��С��0
     li x31 ,0
     j case2_end
 
     case2_loop1:
         addi t2,t2,-1
+        #ѭ������
         blt t2,x0,case2_end
+        #ȡ��β����ǰ
         and a1,t3,t4
         srli t4,t4,1
         slt a2,x0,a1
@@ -175,7 +195,7 @@ case3:
         j case3_loop1
      
      case3_end:
-     blt x0,t1, case3_neg_end
+     blt x0,t1 case3_neg_end
      addi a5,x0,1
      sll a5,a5,a4
      and a5,a5,a0
@@ -242,7 +262,7 @@ case6:
      li sp,1024
      li a1, 0
      li a2, 1
-     li x31, 0 
+     li x31, 0 #��
      jal fib
      j end
      
@@ -272,7 +292,7 @@ case7:
      li sp,1024
      li a1, 0
      li a2, 1
-     li x31, 0 
+     li x31, 0 #��
      jal fib2
      j end
      

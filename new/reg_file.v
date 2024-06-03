@@ -47,6 +47,7 @@ module reg_file(
         end
         //sw
         else begin
+            R_data_1 = register[R_reg_1];
             R_data_2 = register[R_reg_2];
         end
     end
@@ -61,46 +62,46 @@ module reg_file(
         end else if (!stop_flag) begin
             if (W_en && W_reg != 5'b00000) begin
                 if (MemtoReg) begin
-                //lb
-                if (opcode == 7'b0000011 && func3 == 3'b000) begin
-                    register[W_reg] <= {{24{ram_data_out[7]}}, ram_data_out[7:0]};
-                end
-                //lh
-                else if (opcode == 7'b0000011 && func3 == 3'b001) begin
-                    register[W_reg] <= {{16{ram_data_out[15]}}, ram_data_out[15:0]};
-                end
-                //lbu
-                else if (opcode == 7'b0000011 && func3 == 3'b100) begin
-                    register[W_reg] <= {{24{1'b0}}, ram_data_out[7:0]};
-                end
-                //lhu
-                else if (opcode == 7'b0000011 && func3 == 3'b101) begin
-                    register[W_reg] <= {{16{1'b0}}, ram_data_out[15:0]};
-                end
-                else begin
-                    register[W_reg] <= ram_data_out;
-                end    
-                end
-                else begin
-                //lb
-                if (opcode == 7'b0000011 && func3 == 3'b000) begin
-                    register[W_reg] <= {{24{W_data[7]}}, W_data[7:0]};
-                end
-                //lh
-                else if (opcode == 7'b0000011 && func3 == 3'b001) begin
-                    register[W_reg] <= {{16{W_data[15]}}, W_data[15:0]};
-                end
-                //lbu
-                else if (opcode == 7'b0000011 && func3 == 3'b100) begin
-                    register[W_reg] <= {{24{1'b0}}, W_data[7:0]};
-                end
-                //lhu
-                else if (opcode == 7'b0000011 && func3 == 3'b101) begin
-                    register[W_reg] <= {{16{1'b0}}, W_data[15:0]};
+                    //lb
+                    if (opcode == 7'b0000011 && func3 == 3'b000) begin
+                        register[W_reg] <= {{24{ram_data_out[7]}}, ram_data_out[7:0]};
+                    end
+                    //lh
+                    else if (opcode == 7'b0000011 && func3 == 3'b001) begin
+                        register[W_reg] <= {{16{ram_data_out[15]}}, ram_data_out[15:0]};
+                    end
+                    //lbu
+                    else if (opcode == 7'b0000011 && func3 == 3'b100) begin
+                        register[W_reg] <= {{24{1'b0}}, ram_data_out[7:0]};
+                    end
+                    //lhu
+                    else if (opcode == 7'b0000011 && func3 == 3'b101) begin
+                        register[W_reg] <= {{16{1'b0}}, ram_data_out[15:0]};
+                    end
+                    else begin
+                        register[W_reg] <= ram_data_out;
+                    end    
                 end
                 else begin
-                    register[W_reg] <= W_data;
-                end
+                    //lb
+                    if (opcode == 7'b0000011 && func3 == 3'b000) begin
+                        register[W_reg] <= {{24{W_data[7]}}, W_data[7:0]};
+                    end
+                    //lh
+                    else if (opcode == 7'b0000011 && func3 == 3'b001) begin
+                        register[W_reg] <= {{16{W_data[15]}}, W_data[15:0]};
+                    end
+                    //lbu
+                    else if (opcode == 7'b0000011 && func3 == 3'b100) begin
+                        register[W_reg] <= {{24{1'b0}}, W_data[7:0]};
+                    end
+                    //lhu
+                    else if (opcode == 7'b0000011 && func3 == 3'b101) begin
+                        register[W_reg] <= {{16{1'b0}}, W_data[15:0]};
+                    end
+                    else begin
+                        register[W_reg] <= W_data;
+                    end
                 end
                 
             end
@@ -109,9 +110,9 @@ module reg_file(
                 // read the data to a0 register
                 // a7 == register[17]: system call parameter
                 if (register[17] == 0) begin
-                    register[5'b01000] <= {24'h000000, switch};
-                end else
-                if (register[17] == 1) begin
+                    register[5'b01010] <= {24'h000000, switch};
+                end
+                else if (register[17] == 1) begin
                     register[5'b01010] <= keyboard;
                 end
             end

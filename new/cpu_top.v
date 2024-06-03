@@ -25,6 +25,7 @@ module cpu_top (
     wire clk_23;    // for cpu  - 23 MHz
     wire clk_10;    // for UART - 10 MHz   
 
+    // debounced signals
     wire rst_n_;
     wire finish_;
     wire start_pg_;
@@ -32,15 +33,17 @@ module cpu_top (
     wire [31:0] reg_map_tube;
     wire [31:0] reg_map_led;
     assign led = reg_map_led[7:0];
-    
-    // test light
-    // assign test_pc[7] = finish;
 
     // keyboard
     wire [15:0] keyboard_out;
     wire [31:0] reg_data;
     wire [31:0] keyboard;
     wire enter;
+
+    // small led
+    assign small_led[7] = small_switch[7];    // keyboard beffer indicator
+    assign small_led[6] = !upg_rst;           // uart mode indicator
+    assign small_led[5] = finish_ | enter;    // enter indicator
 
     // reset buttun debouncer
     debounce debounce_reset(
@@ -74,7 +77,7 @@ module cpu_top (
     tube tube_inst(
         .clk(clk_100),
         .rst_n(rst_n_),
-        .reg_data(small_switch[0] ? reg_data : reg_map_tube),
+        .reg_data(small_switch[7] ? reg_data : reg_map_tube),
         .tube_scan(tube_scan),
         .tube_signal_left(tube_signal_left),
         .tube_signal_right(tube_signal_right)   
@@ -92,11 +95,11 @@ module cpu_top (
     // keyboard process controller
     process_keyboard process_keyboard_inst(
         .clk(clk_100),
-        .rst_n(rst_n),
+        .rst_n(rst_n_),
         .keyboard_out(keyboard_out),
         .temp_data(reg_data),
         .reg_data(keyboard),
-        .mono_clk(small_led[7]),    // pressed signal
+        // .mono_clk(small_led[7]),    // pressed signal
         .enter(enter)
     );
 
@@ -110,7 +113,7 @@ module cpu_top (
         .finish(finish_ | enter),
         .reg_map_tube(reg_map_tube),
         .reg_map_led(reg_map_led),        
-        .test_pc(small_led[6:0]),
+        .test_pc(small_led[4:0]),
         // uart
         .upg_rst(upg_rst),
         .upg_clk_o(upg_clk_o),
@@ -137,7 +140,7 @@ module cpu_top (
     wire upg_wen_o;
     wire upg_done_o;
     wire [14:0] upg_adr_o;
-    wire[31:0] upg_dat_o;
+    wire [31:0] upg_dat_o;
     wire spg_bufg;
 
     BUFG U1(.I(start_pg), .O(spg_bufg));

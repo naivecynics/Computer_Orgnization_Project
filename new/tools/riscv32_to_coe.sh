@@ -1,15 +1,16 @@
 #!/bin/bash
 
 # argument checking
-if [ $# -eq 0 ]; then
-    echo "Usage: $0 <file.asm>"
+if [ $# -lt 2 ]; then
+    echo "Usage: $0 <file.asm> <coe_base>"
     exit 1
 fi
 
 input_file="$1"
+coe_base="$2"
 base_name="${input_file%.*}"
 
-# assenbling
+# assembling
 riscv32-unknown-elf-as "$input_file" -o "${base_name}.o" -march=rv32i
 if [ $? -ne 0 ]; then
     echo "Assembly failed."
@@ -37,7 +38,7 @@ else
 fi
 
 # binary to coe
-python3 bin_to_coe.py "${base_name}.bin" "${base_name}.coe"
+python3 bin_to_coe.py "${base_name}.bin" "${base_name}.coe" "$coe_base"
 if [ $? -ne 0 ]; then
     echo "Conversion to COE failed."
     exit 1
